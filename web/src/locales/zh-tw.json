@@ -337,6 +337,7 @@
         "no_global_errors": "沒有全域錯誤",
         "no_history": "沒有歷史記錄"
       },
+      "filtered_suffix": "依規則略過",
       "folders": "個郵件夾",
       "gap_fill_active": "執行中的查漏補缺任務",
       "gap_fill_downloaded_suffix": "已下載",

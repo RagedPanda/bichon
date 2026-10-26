@@ -337,6 +337,7 @@
         "no_global_errors": "لا توجد أخطاء عامة",
         "no_history": "لا يوجد سجل"
       },
+      "filtered_suffix": "تم تخطيها حسب القواعد",
       "folders": "صناديق البريد",
       "gap_fill_active": "عملية الاستكمال قيد التشغيل",
       "gap_fill_downloaded_suffix": "تم تنزيلها",

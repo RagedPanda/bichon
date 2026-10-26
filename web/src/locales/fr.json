@@ -337,6 +337,7 @@
         "no_global_errors": "Aucune erreur globale",
         "no_history": "Aucun historique disponible"
       },
+      "filtered_suffix": "ignorés par les règles",
       "folders": "boîtes mail",
       "gap_fill_active": "Tâche de rattrapage en cours",
       "gap_fill_downloaded_suffix": "téléchargés",

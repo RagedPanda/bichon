@@ -337,6 +337,7 @@
         "no_global_errors": "Нет глобальных ошибок",
         "no_history": "Нет истории"
       },
+      "filtered_suffix": "пропущено по правилам",
       "folders": "почтовые ящики",
       "gap_fill_active": "Выполняемый запуск восполнения",
       "gap_fill_downloaded_suffix": "скачано",

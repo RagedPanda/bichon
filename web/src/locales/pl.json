@@ -337,6 +337,7 @@
         "no_global_errors": "Brak błędów globalnych",
         "no_history": "Brak historii"
       },
+      "filtered_suffix": "pominięte przez reguły",
       "folders": "skrzynki",
       "gap_fill_active": "Trwające uzupełnianie",
       "gap_fill_downloaded_suffix": "pobrano",

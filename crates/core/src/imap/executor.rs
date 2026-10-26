@@ -19,7 +19,7 @@
 use crate::account::migration::AccountModel;
 use crate::account::state::{DownloadState, DownloadStatus, FolderStatus};
 use crate::archive::imap::mailbox::MailBox;
-use crate::envelope::extractor::extract_envelope_and_store_it;
+use crate::envelope::extractor::{extract_envelope_and_store_it, ExtractOutcome};
 use crate::error::code::ErrorCode;
 use crate::imap::session::SessionStream;
 use crate::raise_error;
@@ -55,9 +55,14 @@ fn classify_imap_error(e: &async_imap::error::Error) -> ErrorCode {
 /// The outcome of one batched body fetch ([`ImapExecutor::uid_batch_retrieve_emails`]).
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct BatchFetchOutcome {
-    /// Messages actually stored. Parse-skipped and oversized messages are
-    /// not included.
+    /// Messages processed by this batch (fetched and run through extraction).
+    /// Includes duplicates and messages dropped by archive rules, so callers
+    /// can use it to advance a progress counter. Parse-skipped and oversized
+    /// messages are not included.
     pub stored: u64,
+    /// The subset of `stored` that the account's archive rules rejected. They
+    /// were processed but never archived.
+    pub filtered: u64,
     /// The server looked like it was rate-limiting (consecutive stall
     /// reports); callers back off before the next batch.
     pub throttled: bool,
@@ -281,6 +286,7 @@ impl ImapExecutor {
         )?;
 
         let mut count = 0u64;
+        let mut filtered = 0u64;
         for batch in uid_batches {
             if token.is_cancelled() {
                 DownloadState::update_session_status(
@@ -308,7 +314,7 @@ impl ImapExecutor {
                 &batch.0,
                 account.max_email_size_bytes,
                 token.clone(),
-                Some(&|cumulative, avg_secs, stall_secs| {
+                Some(&|cumulative, _cumulative_filtered, avg_secs, stall_secs| {
                     // Per-message progress: the current batch's cumulative count
                     // keeps the UI moving while a slow server trickles messages.
                     let _ = DownloadState::update_folder_progress(
@@ -329,11 +335,13 @@ impl ImapExecutor {
                 tokio::time::sleep(std::time::Duration::from_secs(5)).await;
             }
             count += outcome.stored;
-            DownloadState::update_folder_progress(
+            filtered += outcome.filtered;
+            DownloadState::update_folder_progress_and_filtered(
                 account.id,
                 mailbox.name.clone(),
                 planned,
                 count,
+                filtered,
                 FolderStatus::Downloading,
                 None,
             )?;
@@ -554,6 +562,7 @@ impl ImapExecutor {
         )?;
 
         let mut count = 0u64;
+        let mut filtered = 0u64;
         for (index, batch) in batches.into_iter().enumerate() {
             if token.is_cancelled() {
                 DownloadState::update_session_status(
@@ -579,7 +588,7 @@ impl ImapExecutor {
                     &batch.0,
                     account.max_email_size_bytes,
                     token.clone(),
-                    Some(&|cumulative, avg_secs, stall_secs| {
+                    Some(&|cumulative, _cumulative_filtered, avg_secs, stall_secs| {
                         // Report per-message so the UI moves even while a slow
                         // server trickles out the current batch.
                         DownloadState::update_folder_progress(
@@ -645,11 +654,13 @@ impl ImapExecutor {
             match batch_result {
                 Ok(outcome) => {
                     count += outcome.stored;
-                    DownloadState::update_folder_progress(
+                    filtered += outcome.filtered;
+                    DownloadState::update_folder_progress_and_filtered(
                         account.id,
                         mailbox.name.clone(),
                         planned,
                         count,
+                        filtered,
                         FolderStatus::Downloading,
                         None,
                     )?;
@@ -707,8 +718,9 @@ impl ImapExecutor {
         uid_set: &str,
         max_email_size_bytes: Option<u64>,
         token: CancellationToken,
+        // (processed, filtered-by-archive-rules, avg_secs, stall_secs)
         progress: Option<
-            &(dyn Fn(u64, Option<f64>, Option<f64>) -> BichonResult<()> + Send + Sync),
+            &(dyn Fn(u64, u64, Option<f64>, Option<f64>) -> BichonResult<()> + Send + Sync),
         >,
     ) -> BichonResult<BatchFetchOutcome> {
         let limit = max_email_size_bytes.unwrap_or(DEFAULT_MAX_EMAIL_SIZE);
@@ -749,13 +761,17 @@ impl ImapExecutor {
         }
 
         // PASS 2: fetch bodies only for acceptable UIDs
-        let filtered = compress_uid_list(acceptable_uids);
+        let uid_set = compress_uid_list(acceptable_uids);
         let mut body_stream = session
-            .uid_fetch(&filtered, BODY_FETCH_COMMAND)
+            .uid_fetch(&uid_set, BODY_FETCH_COMMAND)
             .await
             .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
 
         let mut count = 0u64;
+        // Messages dropped by the account's archive rules. Counted as
+        // processed (they were fetched) but reported separately so the sync
+        // state can show what the filter kept out.
+        let mut filtered = 0u64;
         // Messages skipped because their body could not be parsed (not
         // archived). Reported through the outcome so callers can surface a
         // folder-level warning and count them as failed where appropriate.
@@ -784,7 +800,7 @@ impl ImapExecutor {
                     Err(_) => {
                         if token.is_cancelled() {
                             if let Some(progress) = progress {
-                                let _ = progress(count, None, None);
+                                let _ = progress(count, filtered, None, None);
                             }
                             return Err(raise_error!(
                                 "Stream cancelled".into(),
@@ -795,7 +811,7 @@ impl ImapExecutor {
                         consecutive_stalls += 1;
 
                         if let Some(progress) = progress {
-                            progress(count, None, Some(stall_secs))?;
+                            progress(count, filtered, None, Some(stall_secs))?;
                         }
                         continue;
                     }
@@ -804,7 +820,7 @@ impl ImapExecutor {
                 Ok(item) => item,
                 Err((processed, e)) => {
                     if let Some(progress) = progress {
-                        let _ = progress(processed, None, None);
+                        let _ = progress(processed, filtered, None, None);
                     }
                     return Err(raise_error!(format!("{:#?}", e), classify_imap_error(&e)));
                 }
@@ -814,7 +830,7 @@ impl ImapExecutor {
             if token.is_cancelled() {
                 tracing::info!("Account {}: UID fetch stream interrupted.", account_id);
                 if let Some(progress) = progress {
-                    let _ = progress(count, None, None);
+                    let _ = progress(count, filtered, None, None);
                 }
                 return Err(raise_error!(
                     "Stream cancelled".into(),
@@ -841,7 +857,10 @@ impl ImapExecutor {
             // the skip-warning below can name the message.
             let fetch_uid = fetch.uid.unwrap_or(0);
             match extract_envelope_and_store_it(fetch, account_id, mailbox_id).await {
-                Ok(()) => {}
+                Ok(ExtractOutcome::Filtered) => {
+                    filtered += 1;
+                }
+                Ok(_) => {}
                 Err(e) if e.code() == ErrorCode::EmailParseError => {
                     // One broken message must not abort the batch (#377): it is
                     // not stored, the stream keeps going, and the running state
@@ -866,18 +885,19 @@ impl ImapExecutor {
                 }
                 Err(e) => {
                     if let Some(progress) = progress {
-                        let _ = progress(count, None, None);
+                        let _ = progress(count, filtered, None, None);
                     }
                     return Err(e);
                 }
             }
             count += 1;
             if let Some(progress) = progress {
-                progress(count, avg_secs, None)?;
+                progress(count, filtered, avg_secs, None)?;
             }
         }
         Ok(BatchFetchOutcome {
             stored: count,
+            filtered,
             throttled: consecutive_stalls >= 2,
             parse_skipped,
         })
@@ -968,6 +988,39 @@ impl ImapExecutor {
             let uid = fetch.uid.unwrap_or(0);
             let msg_id = fetch.header().and_then(parse_message_id_header);
             result.insert(uid, msg_id);
+        }
+        Ok(result)
+    }
+
+    /// Fetch raw header blocks for a UID sequence-set, without bodies.
+    ///
+    /// Used by gap-fill to apply archive rules to missing candidates before
+    /// deciding whether their bodies are worth downloading.
+    pub async fn fetch_uid_header_blocks(
+        session: &mut Session<Box<dyn SessionStream>>,
+        uid_set: &str,
+        token: CancellationToken,
+    ) -> BichonResult<Vec<(u32, Vec<u8>)>> {
+        let mut stream = session
+            .uid_fetch(uid_set, "(UID BODY.PEEK[HEADER])")
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+
+        let mut result = Vec::new();
+        while let Some(fetch) = stream
+            .try_next()
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?
+        {
+            if token.is_cancelled() {
+                return Err(raise_error!(
+                    "Stream cancelled".into(),
+                    ErrorCode::InternalError
+                ));
+            }
+            let uid = fetch.uid.unwrap_or(0);
+            let header = fetch.header().map(|h| h.to_vec()).unwrap_or_default();
+            result.push((uid, header));
         }
         Ok(result)
     }

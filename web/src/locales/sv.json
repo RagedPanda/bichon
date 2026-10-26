@@ -337,6 +337,7 @@
         "no_global_errors": "Inga globala fel",
         "no_history": "Ingen historik"
       },
+      "filtered_suffix": "överhoppade av regler",
       "folders": "postlådor",
       "gap_fill_active": "Pågående kompletteringskörning",
       "gap_fill_downloaded_suffix": "nedladdade",

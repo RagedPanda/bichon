@@ -337,6 +337,7 @@
         "no_global_errors": "Ingen globale feil",
         "no_history": "Ingen historikk"
       },
+      "filtered_suffix": "hoppet over av regler",
       "folders": "postbokser",
       "gap_fill_active": "Kjørende backfill-oppgave",
       "gap_fill_downloaded_suffix": "lastet ned",

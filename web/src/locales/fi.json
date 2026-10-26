@@ -337,6 +337,7 @@
         "no_global_errors": "Ei yleisiä virheitä",
         "no_history": "Ei historiaa"
       },
+      "filtered_suffix": "sääntöjen ohittamia",
       "folders": "postilaatikot",
       "gap_fill_active": "Käynnissä oleva täydennys",
       "gap_fill_downloaded_suffix": "ladattu",

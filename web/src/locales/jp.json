@@ -337,6 +337,7 @@
         "no_global_errors": "全体エラーはありません",
         "no_history": "履歴がありません"
       },
+      "filtered_suffix": "ルールによりスキップ",
       "folders": "メールボックス",
       "gap_fill_active": "実行中の差分補填タスク",
       "gap_fill_downloaded_suffix": "件ダウンロード済み",

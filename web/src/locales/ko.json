@@ -337,6 +337,7 @@
         "no_global_errors": "전체 오류가 없습니다",
         "no_history": "기록이 없습니다"
       },
+      "filtered_suffix": "규칙에 따라 건너뜀",
       "folders": "메일함",
       "gap_fill_active": "실행 중인 백필 작업",
       "gap_fill_downloaded_suffix": "개 다운로드됨",

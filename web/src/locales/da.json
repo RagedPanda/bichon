@@ -337,6 +337,7 @@
         "no_global_errors": "Ingen globale fejl",
         "no_history": "Ingen historik"
       },
+      "filtered_suffix": "sprunget over af regler",
       "folders": "postkasser",
       "gap_fill_active": "Kørende backfill-kørsel",
       "gap_fill_downloaded_suffix": "downloadet",

@@ -337,6 +337,7 @@
         "no_global_errors": "Geen globale fouten",
         "no_history": "Geen geschiedenis beschikbaar"
       },
+      "filtered_suffix": "overgeslagen door regels",
       "folders": "mailboxen",
       "gap_fill_active": "Lopende backfill-taak",
       "gap_fill_downloaded_suffix": "Gedownload",

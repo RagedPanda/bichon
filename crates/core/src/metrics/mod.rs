@@ -276,7 +276,7 @@ gauge_vec_family!(
 counter_vec_family!(
     EMAILS_INGESTED,
     "bichon_emails_ingested_total",
-    "Emails processed by the ingestion pipeline, by account, source and outcome. 'imported' includes messages dropped by archive rules; 'duplicate' means the content hash was already archived; 'failed' means the message could not be fetched, parsed or stored. Counters reset to zero on process restart; use rate() in queries and alerting.",
+    "Emails processed by the ingestion pipeline, by account, source and outcome. 'imported' means a new envelope was stored; 'filtered' means the account's archive rules rejected it; 'duplicate' means the content hash was already archived; 'failed' means the message could not be fetched, parsed or stored. Counters reset to zero on process restart; use rate() in queries and alerting.",
     ["account_id", "source", "outcome"]
 );
 

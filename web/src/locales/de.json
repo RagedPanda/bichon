@@ -337,6 +337,7 @@
         "no_global_errors": "Keine globalen Fehler",
         "no_history": "Kein Verlauf vorhanden"
       },
+      "filtered_suffix": "nach Regeln übersprungen",
       "folders": "Postfächer",
       "gap_fill_active": "Laufender Backfill-Prozess",
       "gap_fill_downloaded_suffix": "heruntergeladen",

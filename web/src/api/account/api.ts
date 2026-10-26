@@ -64,6 +64,7 @@ export interface FolderProgress {
     folder_name: string;
     planned: number;
     current: number;
+    filtered: number;
     status: FolderStatus;
     message: string | null;
 }
@@ -77,6 +78,7 @@ export interface AccountError {
 export interface GapFillFolderStats {
     downloaded: number;
     failed: number;
+    filtered: number;
     candidate_count: number;
     message?: string | null;
 }
@@ -95,6 +97,7 @@ export interface GapFillRun {
     folders: Record<string, GapFillFolderStats>;
     downloaded: number;
     failed: number;
+    filtered: number;
 }
 
 export interface GapFillState {

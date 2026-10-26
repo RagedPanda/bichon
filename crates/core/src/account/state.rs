@@ -64,6 +64,10 @@ pub struct FolderProgress {
     pub folder_name: String,
     pub planned: u64,
     pub current: u64,
+    /// Messages dropped by the account's archive rules in this folder. They
+    /// are included in `current` (they were processed) but never archived.
+    #[serde(default)]
+    pub filtered: u64,
     pub status: FolderStatus,
     pub message: Option<String>,
 }
@@ -81,8 +85,13 @@ pub enum GapFillStatus {
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[cfg_attr(feature = "web-api", derive(poem_openapi::Object))]
 pub struct GapFillFolderStats {
+    /// Messages actually backfilled (new envelopes created).
     pub downloaded: u64,
     pub failed: u64,
+    /// Messages skipped by the archive filter before their bodies were
+    /// downloaded. Not included in `downloaded`.
+    #[serde(default)]
+    pub filtered: u64,
     pub candidate_count: u64,
     /// Live progress hint (e.g. "IMAP server is slow...") shown while the
     /// folder is being scanned; usually `None` once the folder is done.
@@ -101,6 +110,9 @@ pub struct GapFillRun {
     pub downloaded: u64,
     /// Total emails that failed to download during gap-fill.
     pub failed: u64,
+    /// Total emails skipped by the account's archive rules.
+    #[serde(default)]
+    pub filtered: u64,
 }
 
 /// Independent, repeatable gap-fill history for an account. Gap-fill is a
@@ -321,6 +333,43 @@ impl DownloadState {
         status: FolderStatus,
         message: Option<String>,
     ) -> BichonResult<()> {
+        Self::update_folder_progress_inner(
+            account_id, folder_name, planned, current, None, status, message,
+        )
+    }
+
+    /// Updates progress and the archive-filtered count in one read-modify-write.
+    /// The download loop changes both on every batch, so writing them through
+    /// two calls doubled the state clones and redb writes.
+    pub fn update_folder_progress_and_filtered(
+        account_id: u64,
+        folder_name: String,
+        planned: u64,
+        current: u64,
+        filtered: u64,
+        status: FolderStatus,
+        message: Option<String>,
+    ) -> BichonResult<()> {
+        Self::update_folder_progress_inner(
+            account_id,
+            folder_name,
+            planned,
+            current,
+            Some(filtered),
+            status,
+            message,
+        )
+    }
+
+    fn update_folder_progress_inner(
+        account_id: u64,
+        folder_name: String,
+        planned: u64,
+        current: u64,
+        filtered: Option<u64>,
+        status: FolderStatus,
+        message: Option<String>,
+    ) -> BichonResult<()> {
         Self::update_state(account_id, move |state| {
             let mut updated = state.clone();
             if let Some(ref mut session) = updated.active_session {
@@ -337,6 +386,9 @@ impl DownloadState {
 
                 progress.planned = planned;
                 progress.current = current;
+                if let Some(filtered) = filtered {
+                    progress.filtered = filtered;
+                }
                 progress.status = status;
                 progress.message = message;
             }
@@ -368,6 +420,7 @@ impl DownloadState {
                             folder_name: name,
                             planned: 0,
                             current: 0,
+                            filtered: 0,
                             status: FolderStatus::Pending,
                             message: None,
                         },
@@ -487,6 +540,7 @@ impl GapFillState {
             if let Some(ref mut run) = updated.active {
                 run.downloaded += stats.downloaded;
                 run.failed += stats.failed;
+                run.filtered += stats.filtered;
                 run.folders.insert(folder_name, stats);
             }
             Ok(updated)
@@ -504,6 +558,44 @@ impl GapFillState {
         downloaded: u64,
         message: Option<String>,
     ) -> BichonResult<()> {
+        Self::update_folder_progress_inner(
+            account_id,
+            folder_name,
+            candidate_count,
+            downloaded,
+            None,
+            message,
+        )
+    }
+
+    /// Updates live progress and the filtered count in one read-modify-write,
+    /// mirroring the download state's combined update.
+    pub fn update_folder_progress_and_filtered(
+        account_id: u64,
+        folder_name: String,
+        candidate_count: u64,
+        downloaded: u64,
+        filtered: u64,
+        message: Option<String>,
+    ) -> BichonResult<()> {
+        Self::update_folder_progress_inner(
+            account_id,
+            folder_name,
+            candidate_count,
+            downloaded,
+            Some(filtered),
+            message,
+        )
+    }
+
+    fn update_folder_progress_inner(
+        account_id: u64,
+        folder_name: String,
+        candidate_count: u64,
+        downloaded: u64,
+        filtered: Option<u64>,
+        message: Option<String>,
+    ) -> BichonResult<()> {
         Self::update_state(account_id, move |current| {
             let mut updated = current.clone();
             if let Some(ref mut run) = updated.active {
@@ -513,12 +605,42 @@ impl GapFillState {
                     .or_insert(GapFillFolderStats {
                         downloaded: 0,
                         failed: 0,
+                        filtered: 0,
                         candidate_count,
                         message: None,
                     });
                 entry.candidate_count = candidate_count;
                 entry.downloaded = downloaded;
+                if let Some(filtered) = filtered {
+                    entry.filtered = filtered;
+                }
                 entry.message = message;
+            }
+            Ok(updated)
+        })
+    }
+
+    /// Records how many candidates the archive filter rejected before any body
+    /// download, so the live gap-fill view can show it alongside progress.
+    pub fn set_folder_filtered(
+        account_id: u64,
+        folder_name: String,
+        filtered: u64,
+    ) -> BichonResult<()> {
+        Self::update_state(account_id, move |current| {
+            let mut updated = current.clone();
+            if let Some(ref mut run) = updated.active {
+                let entry = run
+                    .folders
+                    .entry(folder_name.clone())
+                    .or_insert(GapFillFolderStats {
+                        downloaded: 0,
+                        failed: 0,
+                        filtered: 0,
+                        candidate_count: 0,
+                        message: None,
+                    });
+                entry.filtered = filtered;
             }
             Ok(updated)
         })
@@ -531,6 +653,7 @@ impl GapFillState {
         status: GapFillStatus,
         downloaded: u64,
         failed: u64,
+        filtered: u64,
     ) -> BichonResult<()> {
         Self::update_state(account_id, move |current| {
             let mut updated = current.clone();
@@ -539,6 +662,7 @@ impl GapFillState {
                 run.finished_at = Some(utc_now!());
                 run.downloaded = downloaded;
                 run.failed = failed;
+                run.filtered = filtered;
                 updated.history.push(run);
                 let keep = updated.history.len().saturating_sub(10);
                 if keep > 0 {
@@ -596,7 +720,7 @@ impl GapFillState {
 
 #[cfg(test)]
 mod tests {
-    use super::{AccountError, ErrorKind};
+    use super::{AccountError, ErrorKind, FolderProgress, GapFillFolderStats, GapFillRun};
 
     /// Download history written by an older version has no `kind` field. It
     /// must keep deserializing (as Internal) instead of breaking the account
@@ -619,5 +743,29 @@ mod tests {
         let json = serde_json::to_string(&error).unwrap();
         assert!(json.contains("\"kind\":\"auth\""));
         assert_eq!(serde_json::from_str::<AccountError>(&json).unwrap(), error);
+    }
+
+    #[test]
+    fn legacy_folder_progress_without_filtered_deserializes() {
+        let progress: FolderProgress = serde_json::from_str(
+            r#"{"folder_name":"INBOX","planned":10,"current":4,"status":"Downloading","message":null}"#,
+        )
+        .expect("legacy FolderProgress must deserialize");
+        assert_eq!(progress.filtered, 0);
+    }
+
+    #[test]
+    fn legacy_gap_fill_stats_without_filtered_deserialize() {
+        let stats: GapFillFolderStats = serde_json::from_str(
+            r#"{"downloaded":2,"failed":0,"candidate_count":5,"message":null}"#,
+        )
+        .expect("legacy GapFillFolderStats must deserialize");
+        assert_eq!(stats.filtered, 0);
+
+        let run: GapFillRun = serde_json::from_str(
+            r#"{"started_at":1,"finished_at":null,"status":"Success","folders":{},"downloaded":2,"failed":0}"#,
+        )
+        .expect("legacy GapFillRun must deserialize");
+        assert_eq!(run.filtered, 0);
     }
 }

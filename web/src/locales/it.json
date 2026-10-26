@@ -337,6 +337,7 @@
         "no_global_errors": "Nessun errore globale",
         "no_history": "Nessuna cronologia disponibile"
       },
+      "filtered_suffix": "saltati dalle regole",
       "folders": "caselle di posta",
       "gap_fill_active": "Attività di backfill in esecuzione",
       "gap_fill_downloaded_suffix": "scaricati",

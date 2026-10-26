@@ -337,6 +337,7 @@
         "no_global_errors": "Sin errores globales",
         "no_history": "Sin historial"
       },
+      "filtered_suffix": "omitidos por reglas",
       "folders": "buzones",
       "gap_fill_active": "Tarea de backfill en ejecución",
       "gap_fill_downloaded_suffix": "descargados",

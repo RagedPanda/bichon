@@ -337,6 +337,7 @@
         "no_global_errors": "No global errors",
         "no_history": "No historical records found"
       },
+      "filtered_suffix": "skipped by rules",
       "folders": "mailboxes",
       "gap_fill_active": "Running backfill task",
       "gap_fill_downloaded_suffix": "downloaded",

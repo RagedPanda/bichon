@@ -337,6 +337,7 @@
         "no_global_errors": "暂无全局错误",
         "no_history": "暂无历史记录"
       },
+      "filtered_suffix": "按规则跳过",
       "folders": "个文件夹",
       "gap_fill_active": "运行中的查漏补缺任务",
       "gap_fill_downloaded_suffix": "已下载",

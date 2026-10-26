@@ -337,6 +337,7 @@
         "no_global_errors": "Sem erros globais",
         "no_history": "Sem histórico"
       },
+      "filtered_suffix": "ignorados pelas regras",
       "folders": "caixas de correio",
       "gap_fill_active": "Tarefa de backfill em execução",
       "gap_fill_downloaded_suffix": "baixados",

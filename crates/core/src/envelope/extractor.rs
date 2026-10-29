@@ -482,6 +482,8 @@ async fn extract_envelope_core(
         mailbox_id,
         uid,
         imap_uid,
+        // Just archived: nothing has moved it out of the source mailbox yet.
+        cleanup_moved: false,
         subject,
         preview,
         from,
@@ -576,6 +578,7 @@ pub fn extract_envelope_from_nested_message(
         mailbox_id: Default::default(),
         uid: Default::default(),
         imap_uid: Default::default(),
+        cleanup_moved: false,
         subject,
         preview: text,
         from,

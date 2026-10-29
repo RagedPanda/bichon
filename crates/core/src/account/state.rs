@@ -17,7 +17,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{
-    database::{delete_impl, find_impl, manager::DB_MANAGER, update_impl, upsert_impl, MemDbModel},
+    database::{
+        delete_impl, find_impl, manager::DB_MANAGER, update_impl,
+        upsert_impl, MemDbModel,
+    },
     error::BichonResult,
     metrics::classify::{classify_error, ErrorKind},
     utc_now,
@@ -718,9 +721,317 @@ impl GapFillState {
     }
 }
 
+// ─── Source-mailbox cleanup ────────────────────────────────────────────────
+
+/// How many finished cleanup runs are kept per account.
+pub const REMOTE_CLEANUP_HISTORY: usize = 30;
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Enum))]
+pub enum RemoteCleanupStatus {
+    #[default]
+    Running,
+    Success,
+    Cancelled,
+    /// A guard rail (legal hold, stale backup, missing capability) refused the
+    /// run before anything was moved.
+    Blocked,
+    Failed,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Enum))]
+pub enum RemoteCleanupTrigger {
+    #[default]
+    Scheduled,
+    Manual,
+}
+
+/// At most this many failed messages are listed **per run** (not per folder).
+/// Counters stay exact; the list is for "which ones?" and must not make a run
+/// write a megabyte of report on every message. Routine policy skips are
+/// counted but not listed — they need no operator action.
+pub const REMOTE_CLEANUP_REPORTED_MESSAGES: usize = 200;
+
+/// Display subjects are truncated to this many characters in a report.
+///
+/// A `Subject:` header is attacker-controlled and has no length limit — a
+/// folded header can be tens of kilobytes, and ingest stores it verbatim.
+/// Reports only need enough to recognise a message, so this bounds each entry
+/// instead of letting a crafted mailbox inflate the state row.
+pub const REMOTE_CLEANUP_SUBJECT_CHARS: usize = 160;
+
+/// One message the run did not move, named so an operator can find it.
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Object))]
+pub struct RemoteCleanupSkippedMessage {
+    /// Source folder the message was found in.
+    pub folder: String,
+    pub uid: u32,
+    pub message_id: String,
+    /// Display subject; empty when the archive has none.
+    #[serde(default)]
+    pub subject: Option<String>,
+    /// Stable reason key, the same set counted in `skipped_reasons`.
+    pub reason: String,
+    /// `true` when the message counted as a failure, `false` for a policy
+    /// skip. Mirrors how the counters were incremented.
+    pub failed: bool,
+    pub size: u64,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Object))]
+pub struct RemoteCleanupFolderStats {
+    #[serde(default)]
+    pub candidate_count: u64,
+    #[serde(default)]
+    pub verified: u64,
+    #[serde(default)]
+    pub moved: u64,
+    #[serde(default)]
+    pub skipped: u64,
+    #[serde(default)]
+    pub failed: u64,
+    #[serde(default)]
+    pub bytes_moved: u64,
+    #[serde(default)]
+    pub message: Option<String>,
+    /// Why messages were skipped/stopped in this folder, for the run report.
+    /// Counts only: the UI shows successes and failures, not routine skips.
+    #[serde(default)]
+    pub skipped_reasons: BTreeMap<String, u64>,
+    /// Which messages this folder failed to move, oldest first, capped at
+    /// [`REMOTE_CLEANUP_REPORTED_MESSAGES`]. Routine skips are counted in
+    /// `skipped` but not listed. `None` — rather than an empty list — marks a
+    /// report written before this field existed, which the UI must not present
+    /// as "nothing failed".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unprocessed: Option<Vec<RemoteCleanupSkippedMessage>>,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Object))]
+pub struct RemoteCleanupRun {
+    pub run_id: String,
+    pub started_at: i64,
+    pub finished_at: Option<i64>,
+    pub trigger: RemoteCleanupTrigger,
+    /// The API user who triggered a manual run; `None` for the scheduler.
+    pub user: Option<String>,
+    pub status: RemoteCleanupStatus,
+    pub destination_folder: String,
+    /// Per-source-folder outcome, keyed by mailbox name.
+    pub folders: BTreeMap<String, RemoteCleanupFolderStats>,
+    pub moved: u64,
+    pub skipped: u64,
+    pub failed: u64,
+    pub bytes_moved: u64,
+    pub message: Option<String>,
+}
+
+/// Independent state for the source-mailbox cleanup task. Moving is repeatable
+/// and tracked separately from downloads and gap-fill.
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[cfg_attr(feature = "web-api", derive(poem_openapi::Object))]
+pub struct RemoteCleanupState {
+    pub account_id: u64,
+    pub active: Option<RemoteCleanupRun>,
+    pub history: Vec<RemoteCleanupRun>,
+    /// Epoch millis of the last finished (or blocked) run. The scheduler uses
+    /// this to avoid re-firing the same cron slot.
+    #[serde(default)]
+    pub last_finished_at: Option<i64>,
+}
+
+impl MemDbModel for RemoteCleanupState {
+    fn collection() -> &'static str {
+        "remote_cleanup_states"
+    }
+    fn key(&self) -> String {
+        self.account_id.to_string()
+    }
+}
+
+impl RemoteCleanupState {
+    pub fn get(account_id: u64) -> BichonResult<Option<Self>> {
+        find_impl::<RemoteCleanupState>(DB_MANAGER.db(), &account_id.to_string())
+    }
+
+    /// Starts a run, moving any stale active run into history as failed. The
+    /// caller must already hold the account-level cleanup lock.
+    pub fn start_run(
+        account_id: u64,
+        run_id: String,
+        trigger: RemoteCleanupTrigger,
+        user: Option<String>,
+        destination_folder: String,
+    ) -> BichonResult<Self> {
+        let mut state = Self::get(account_id)?.unwrap_or(RemoteCleanupState {
+            account_id,
+            ..Default::default()
+        });
+        if let Some(mut stale) = state.active.take() {
+            if stale.status == RemoteCleanupStatus::Running {
+                stale.status = RemoteCleanupStatus::Failed;
+                stale.finished_at = Some(utc_now!());
+                stale.message = Some("interrupted by a new run".into());
+                state.history.push(stale);
+            }
+        }
+        state.active = Some(RemoteCleanupRun {
+            run_id,
+            started_at: utc_now!(),
+            finished_at: None,
+            trigger,
+            user,
+            status: RemoteCleanupStatus::Running,
+            destination_folder,
+            ..Default::default()
+        });
+        upsert_impl(DB_MANAGER.db(), state.clone())?;
+        Ok(state)
+    }
+
+    /// Records the latest per-folder counters of the active run.
+    ///
+    /// The entry is **replaced**, not accumulated, so callers may persist a
+    /// cumulative snapshot after every message. Run totals are recomputed from
+    /// the per-folder stats, which also keeps them correct across folders.
+    pub fn update_folder(
+        account_id: u64,
+        folder_name: String,
+        stats: RemoteCleanupFolderStats,
+    ) -> BichonResult<()> {
+        Self::update_state(account_id, move |current| {
+            let mut updated = current.clone();
+            if let Some(ref mut run) = updated.active {
+                run.folders.insert(folder_name, stats);
+                run.moved = run.folders.values().map(|folder| folder.moved).sum();
+                run.skipped = run.folders.values().map(|folder| folder.skipped).sum();
+                run.failed = run.folders.values().map(|folder| folder.failed).sum();
+                run.bytes_moved = run.folders.values().map(|folder| folder.bytes_moved).sum();
+            }
+            Ok(updated)
+        })
+    }
+
+    pub fn finish_run(
+        account_id: u64,
+        status: RemoteCleanupStatus,
+        moved: u64,
+        skipped: u64,
+        failed: u64,
+        bytes_moved: u64,
+        message: Option<String>,
+    ) -> BichonResult<()> {
+        Self::update_state(account_id, move |current| {
+            let mut updated = current.clone();
+            if let Some(mut run) = updated.active.take() {
+                run.status = status;
+                run.finished_at = Some(utc_now!());
+                run.moved = moved;
+                run.skipped = skipped;
+                run.failed = failed;
+                run.bytes_moved = bytes_moved;
+                run.message = message;
+                updated.last_finished_at = run.finished_at;
+                updated.history.push(run);
+                let keep = updated.history.len().saturating_sub(REMOTE_CLEANUP_HISTORY);
+                if keep > 0 {
+                    updated.history.drain(0..keep);
+                }
+            }
+            Ok(updated)
+        })
+    }
+
+    /// Finalizes an active run left behind by a crash. Returns `true` when one
+    /// was finalized. Called on startup, like the gap-fill stale-run sweep.
+    pub fn finalize_stale_run(account_id: u64) -> BichonResult<bool> {
+        let stale = Self::get(account_id)?
+            .and_then(|state| state.active)
+            .map(|run| run.status == RemoteCleanupStatus::Running)
+            .unwrap_or(false);
+        if stale {
+            Self::update_state(account_id, move |current| {
+                let mut updated = current.clone();
+                if let Some(mut run) = updated.active.take() {
+                    if run.status == RemoteCleanupStatus::Running {
+                        run.status = RemoteCleanupStatus::Failed;
+                        run.finished_at = Some(utc_now!());
+                        run.message = Some(
+                            "interrupted before completion; review the run report".into(),
+                        );
+                        updated.last_finished_at = run.finished_at;
+                        updated.history.push(run);
+                        let keep = updated.history.len().saturating_sub(REMOTE_CLEANUP_HISTORY);
+                        if keep > 0 {
+                            updated.history.drain(0..keep);
+                        }
+                    } else {
+                        updated.active = Some(run);
+                    }
+                }
+                Ok(updated)
+            })?;
+        }
+        Ok(stale)
+    }
+
+    /// Finalize a run that was interrupted by an unexpected error. Preserves
+    /// the per-folder totals already recorded. Returns whether a run was
+    /// finalized.
+    pub fn abort_active_run(account_id: u64, reason: &str) -> BichonResult<bool> {
+        Ok(Self::abort_active_run_report(account_id, reason)?.is_some())
+    }
+
+    /// Like [`Self::abort_active_run`], but returns the finalized run so the
+    /// caller can emit the same audit event a normal finish would.
+    pub fn abort_active_run_report(
+        account_id: u64,
+        reason: &str,
+    ) -> BichonResult<Option<RemoteCleanupRun>> {
+        let Some(state) = Self::get(account_id)? else {
+            return Ok(None);
+        };
+        let Some(run) = state.active else {
+            return Ok(None);
+        };
+        let moved: u64 = run.folders.values().map(|folder| folder.moved).sum();
+        let skipped: u64 = run.folders.values().map(|folder| folder.skipped).sum();
+        let failed: u64 = run.folders.values().map(|folder| folder.failed).sum();
+        let bytes: u64 = run.folders.values().map(|folder| folder.bytes_moved).sum();
+        Self::finish_run(
+            account_id,
+            RemoteCleanupStatus::Failed,
+            moved,
+            skipped,
+            failed,
+            bytes,
+            Some(reason.to_string()),
+        )?;
+        Ok(Self::get(account_id)?
+            .and_then(|state| state.history.last().cloned()))
+    }
+
+    fn update_state(
+        account_id: u64,
+        updater: impl FnOnce(RemoteCleanupState) -> BichonResult<RemoteCleanupState> + Send + 'static,
+    ) -> BichonResult<()> {
+        if Self::get(account_id)?.is_some() {
+            update_impl(DB_MANAGER.db(), &account_id.to_string(), updater)?;
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{AccountError, ErrorKind, FolderProgress, GapFillFolderStats, GapFillRun};
+    use super::{
+        AccountError, ErrorKind, FolderProgress, GapFillFolderStats, GapFillRun,
+        RemoteCleanupState,
+    };
 
     /// Download history written by an older version has no `kind` field. It
     /// must keep deserializing (as Internal) instead of breaking the account
@@ -767,5 +1078,22 @@ mod tests {
         )
         .expect("legacy GapFillRun must deserialize");
         assert_eq!(run.filtered, 0);
+    }
+
+    /// Cleanup state written before `last_finished_at`/per-folder
+    /// `skipped_reasons` existed must keep deserializing after an upgrade.
+    #[test]
+    fn legacy_remote_cleanup_state_deserializes() {
+        let state: RemoteCleanupState = serde_json::from_str(
+            r#"{"account_id":1,"active":null,"history":[{"run_id":"r1","started_at":1,"finished_at":2,"trigger":"Scheduled","user":null,"status":"Success","destination_folder":"bichon_auto_created_trash","folders":{"INBOX":{"candidate_count":2,"verified":2,"moved":2,"skipped":0,"failed":0,"bytes_moved":10,"message":null}},"moved":2,"skipped":0,"failed":0,"bytes_moved":10,"message":null}]}"#,
+        )
+        .expect("legacy RemoteCleanupState must deserialize");
+        assert!(state.last_finished_at.is_none());
+        assert_eq!(state.history.len(), 1);
+        assert!(state.history[0].folders["INBOX"].skipped_reasons.is_empty());
+        // A report written before the message list existed must report `None`,
+        // not an empty list: the UI has to tell "nothing skipped" apart from
+        // "we did not record which ones".
+        assert!(state.history[0].folders["INBOX"].unprocessed.is_none());
     }
 }

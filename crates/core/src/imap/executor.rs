@@ -961,6 +961,154 @@ impl ImapExecutor {
         ImapConnectionManager::build(account_id).await
     }
 
+    /// Whether the server advertises `MOVE` (RFC 6851).
+    ///
+    /// Source-mailbox cleanup requires it: MOVE is the only way to take a
+    /// message out of a source folder without Bichon ever issuing `EXPUNGE`.
+    /// The check is live — `capabilities()` issues a fresh `CAPABILITY`
+    /// command on this authenticated connection, so post-login capabilities
+    /// are what gets judged.
+    pub async fn supports_move(
+        session: &mut Session<Box<dyn SessionStream>>,
+    ) -> BichonResult<bool> {
+        let caps = crate::imap::capabilities::fetch_capabilities(session).await?;
+        Ok(crate::imap::capabilities::has_capability(&caps, "MOVE"))
+    }
+
+    /// Select a mailbox read-write (moves need a writable selection).
+    pub async fn select_mailbox(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+    ) -> BichonResult<u32> {
+        let mailbox = session
+            .select(mailbox_name)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        Ok(mailbox.uid_validity.unwrap_or(0))
+    }
+
+    /// Examine a mailbox read-only and return its UIDVALIDITY.
+    pub async fn examine_mailbox(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+    ) -> BichonResult<u32> {
+        let mailbox = session
+            .examine(mailbox_name)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        Ok(mailbox.uid_validity.unwrap_or(0))
+    }
+
+    pub async fn create_mailbox(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+    ) -> BichonResult<()> {
+        session
+            .create(mailbox_name)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))
+    }
+
+    /// Case-insensitive existence check against the server's LIST result.
+    pub async fn mailbox_exists(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+    ) -> BichonResult<bool> {
+        let mailboxes = Self::list_all_mailboxes(session).await?;
+        Ok(mailboxes
+            .iter()
+            .any(|name| name.name().eq_ignore_ascii_case(mailbox_name)))
+    }
+
+    /// Whether one UID currently carries `\Flagged`. Examines the mailbox, so
+    /// the caller must select the source folder again afterwards.
+    pub async fn uid_is_flagged(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+        uid: u32,
+    ) -> BichonResult<bool> {
+        session
+            .examine(mailbox_name)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        let mut stream = session
+            .uid_fetch(uid.to_string(), "(UID FLAGS)")
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        while let Some(fetch) = stream
+            .try_next()
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?
+        {
+            if fetch.uid == Some(uid) {
+                return Ok(fetch
+                    .flags()
+                    .any(|flag| matches!(flag, async_imap::types::Flag::Flagged)));
+            }
+        }
+        Ok(false)
+    }
+
+    /// Fetch the subset of `uid_set` that currently carries `\Flagged`.
+    /// The caller must have selected or examined the mailbox.
+    pub async fn fetch_flagged_uids(
+        session: &mut Session<Box<dyn SessionStream>>,
+        uid_set: &str,
+    ) -> BichonResult<std::collections::HashSet<u32>> {
+        let mut stream = session
+            .uid_fetch(uid_set, "(UID FLAGS)")
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        let mut flagged = std::collections::HashSet::new();
+        while let Some(fetch) = stream
+            .try_next()
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?
+        {
+            if let Some(uid) = fetch.uid {
+                if fetch
+                    .flags()
+                    .any(|flag| matches!(flag, async_imap::types::Flag::Flagged))
+                {
+                    flagged.insert(uid);
+                }
+            }
+        }
+        Ok(flagged)
+    }
+
+    /// `UID MOVE` (RFC 6851). The only move primitive Bichon uses: a move is
+    /// atomic on the server and requires no EXPUNGE anywhere.
+    pub async fn uid_mv(
+        session: &mut Session<Box<dyn SessionStream>>,
+        uid_set: &str,
+        destination: &str,
+    ) -> BichonResult<()> {
+        session
+            .uid_mv(uid_set, destination)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))
+    }
+
+    /// Read-only UID SEARCH in a specific mailbox.
+    pub async fn uid_search_in(
+        session: &mut Session<Box<dyn SessionStream>>,
+        mailbox_name: &str,
+        query: &str,
+    ) -> BichonResult<Vec<u32>> {
+        session
+            .examine(mailbox_name)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        let found = session
+            .uid_search(query)
+            .await
+            .map_err(|e| raise_error!(format!("{:#?}", e), classify_imap_error(&e)))?;
+        let mut uids: Vec<u32> = found.into_iter().collect();
+        uids.sort();
+        Ok(uids)
+    }
+
     /// Fetch UID → Message-ID mapping without downloading bodies.
     /// `uid_set` is an IMAP sequence-set string (e.g. "1:100" or "1,3,5").
     pub async fn fetch_uid_metadata(

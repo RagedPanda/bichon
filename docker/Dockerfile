@@ -26,8 +26,9 @@ RUN chmod +x /usr/local/bin/bichon-cli
 RUN chmod +x /usr/local/bin/bichon-admin
 
 
-# Install ca-certificates to ensure HTTPS certificate verification works correctly
-RUN apt update && apt install -y ca-certificates curl && rm -rf /var/lib/apt/lists/*
+# Install ca-certificates to ensure HTTPS certificate verification works correctly,
+# and tini to run as PID 1 and reap orphaned processes such as timed-out healthchecks
+RUN apt update && apt install -y ca-certificates curl tini && rm -rf /var/lib/apt/lists/*
 # Create data directory
 RUN mkdir -p /data
 
@@ -38,6 +39,7 @@ EXPOSE 15630
 WORKDIR /data
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -fs http://localhost:${BICHON_HTTP_PORT:-15630}/api/status || exit 1
+  CMD curl -fs --max-time 4 http://localhost:${BICHON_HTTP_PORT:-15630}/api/status || exit 1
 
+ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/opt/bichon/bichon-server"]

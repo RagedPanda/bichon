@@ -588,9 +588,9 @@ static DASHBOARD_CACHE: LazyLock<tokio::sync::Mutex<Option<DashboardCache>>> =
 const DASHBOARD_CACHE_TTL: Duration = Duration::from_secs(60);
 
 fn compute_dashboard_cache() -> BichonResult<DashboardCache> {
-    let storage_bytes = get_total_size(&DATA_DIR_MANAGER.storage_dir)
+    let storage_bytes = get_total_size(&DATA_DIR_MANAGER.blob_dir())
         .map_err(|e| raise_error!(format!("{:#?}", e), ErrorCode::InternalError))?;
-    let index_bytes = get_total_size(&DATA_DIR_MANAGER.envelope_dir)
+    let index_bytes = get_total_size(&DATA_DIR_MANAGER.index_dir)
         .map_err(|e| raise_error!(format!("{:#?}", e), ErrorCode::InternalError))?;
     Ok(DashboardCache {
         refreshed_at: Instant::now(),

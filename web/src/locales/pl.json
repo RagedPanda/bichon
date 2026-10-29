@@ -704,6 +704,12 @@
       "save": "Zapisz",
       "saveChanges": "Zapisz zmiany"
     },
+    "filters": {
+      "all": "Wszystkie tokeny",
+      "label": "Filtr",
+      "metricsOnly": "Tylko metryki",
+      "regular": "Zwykłe tokeny"
+    },
     "form": {
       "1day": "1 dzień",
       "30days": "30 dni",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tokeny wygasną automatycznie po wybranym czasie.",
       "expirationLabel": "Wygasa",
       "expirationPlaceholder": "Wybierz czas wygaśnięcia",
+      "metricsOnlyDescription": "Token może wywoływać wyłącznie GET /api/v1/metrics; na pozostałych punktach końcowych jest odrzucany. Właściciel musi mieć uprawnienie system:metrics.",
+      "metricsOnlyLabel": "Tylko punkt metryk",
       "nameDescription": "Opcjonalnie · Maks. 32 znaki",
       "nameLabel": "Nazwa",
       "namePlaceholder": "Nadaj temu tokenowi krótką nazwę",
@@ -725,7 +733,9 @@
       "deleteBtn": "Usuń token",
       "expiresOnLabel": "Wygasa w dniu",
       "expiresOnShort": "Wygasa: {{date}}",
+      "filterEmpty": "Żaden token nie pasuje do tego filtra.",
       "lastUsedLabel": "Ostatnio użyto",
+      "metricsOnlyBadge": "Tylko metryki",
       "neverExpires": "Nigdy nie wygasa",
       "neverLabel": "Nigdy",
       "neverUsed": "Nigdy",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Ostrzeżenie"
     },
     "folders": "Foldery",
+    "hideDetails": "Ukryj szczegóły",
     "messages": "Wiadomości",
     "noMessages": "Brak wiadomości",
+    "noSubject": "(Bez tematu)",
+    "openInSearch": "Otwórz w wyszukiwaniu",
     "selectFolder": "Wybierz folder, aby przeglądać wiadomości",
+    "showDetails": "Pokaż szczegóły",
     "thread": {
       "empty": "Brak wiadomości w tym wątku.",
       "invalidDate": "Niewłaściwa data",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Podstawowy dostęp do systemu",
+      "metrics": "Odczyt metryk serwera (punkt końcowy Prometheus)",
       "root": "Pełna kontrola systemu"
     },
     "timestamp": {

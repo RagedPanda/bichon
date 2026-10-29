@@ -704,6 +704,12 @@
       "save": "儲存",
       "saveChanges": "儲存修改"
     },
+    "filters": {
+      "all": "全部權杖",
+      "label": "篩選",
+      "metricsOnly": "僅指標",
+      "regular": "一般權杖"
+    },
     "form": {
       "1day": "1 天",
       "30days": "30 天",
@@ -715,6 +721,8 @@
       "expirationDescription": "權杖將在選定時間後自動過期。",
       "expirationLabel": "有效期",
       "expirationPlaceholder": "選擇有效期",
+      "metricsOnlyDescription": "該權杖只能呼叫 GET /api/v1/metrics，其他介面一律拒絕。持有者需具備 system:metrics 權限。",
+      "metricsOnlyLabel": "僅限指標介面",
       "nameDescription": "可選 · 最多 32 個字元",
       "nameLabel": "名稱",
       "namePlaceholder": "為該權杖起一個簡短名稱",
@@ -725,7 +733,9 @@
       "deleteBtn": "刪除權杖",
       "expiresOnLabel": "有效期至",
       "expiresOnShort": "有效期至 {{date}}",
+      "filterEmpty": "沒有符合此篩選條件的權杖。",
       "lastUsedLabel": "最後使用",
+      "metricsOnlyBadge": "僅指標",
       "neverExpires": "永不過期",
       "neverLabel": "從不",
       "neverUsed": "未使用",
@@ -1791,9 +1801,13 @@
       "warningTitle": "警告"
     },
     "folders": "資料夾",
+    "hideDetails": "隱藏詳情",
     "messages": "訊息",
     "noMessages": "無訊息",
+    "noSubject": "(無主旨)",
+    "openInSearch": "在搜尋中開啟",
     "selectFolder": "選擇資料夾以檢視訊息",
+    "showDetails": "顯示詳情",
     "thread": {
       "empty": "此串流中沒有訊息。",
       "invalidDate": "無效日期",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "基本系統存取",
+      "metrics": "讀取伺服器指標（Prometheus 介面）",
       "root": "系統最高控制權"
     },
     "timestamp": {

@@ -704,6 +704,12 @@
       "save": "저장",
       "saveChanges": "변경 사항 저장"
     },
+    "filters": {
+      "all": "모든 토큰",
+      "label": "필터",
+      "metricsOnly": "메트릭 전용",
+      "regular": "일반 토큰"
+    },
     "form": {
       "1day": "1일",
       "30days": "30일",
@@ -715,6 +721,8 @@
       "expirationDescription": "토큰은 선택한 시간 이후에 자동으로 만료됩니다.",
       "expirationLabel": "만료",
       "expirationPlaceholder": "만료 선택",
+      "metricsOnlyDescription": "이 토큰은 GET /api/v1/metrics만 호출할 수 있으며 다른 엔드포인트에서는 거부됩니다. 소유자에게 system:metrics 권한이 있어야 합니다.",
+      "metricsOnlyLabel": "메트릭 전용",
       "nameDescription": "선택 사항 · 최대 32자",
       "nameLabel": "이름",
       "namePlaceholder": "토큰의 짧은 이름을 입력하세요",
@@ -725,7 +733,9 @@
       "deleteBtn": "토큰 삭제",
       "expiresOnLabel": "만료일",
       "expiresOnShort": "만료일: {{date}}",
+      "filterEmpty": "이 필터에 맞는 토큰이 없습니다.",
       "lastUsedLabel": "마지막 사용",
+      "metricsOnlyBadge": "메트릭 전용",
       "neverExpires": "만료 없음",
       "neverLabel": "없음",
       "neverUsed": "사용 안 함",
@@ -1791,9 +1801,13 @@
       "warningTitle": "경고"
     },
     "folders": "폴더",
+    "hideDetails": "세부 정보 숨기기",
     "messages": "메시지",
     "noMessages": "메시지 없음",
+    "noSubject": "(제목 없음)",
+    "openInSearch": "검색에서 열기",
     "selectFolder": "메시지를 보려면 폴더를 선택하십시오",
+    "showDetails": "세부 정보 표시",
     "thread": {
       "empty": "이 스레드에 메시지가 없습니다.",
       "invalidDate": "유효하지 않은 날짜",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "기본 시스템 접근",
+      "metrics": "서버 메트릭 읽기(Prometheus 엔드포인트)",
       "root": "시스템 전체 제어"
     },
     "timestamp": {

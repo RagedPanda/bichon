@@ -704,6 +704,12 @@
       "save": "保存",
       "saveChanges": "変更を保存"
     },
+    "filters": {
+      "all": "すべてのトークン",
+      "label": "フィルター",
+      "metricsOnly": "メトリクスのみ",
+      "regular": "通常のトークン"
+    },
     "form": {
       "1day": "1日",
       "30days": "30日間",
@@ -715,6 +721,8 @@
       "expirationDescription": "トークンは選択した期間後に自動的に期限切れになります。",
       "expirationLabel": "有効期限",
       "expirationPlaceholder": "期限を選択",
+      "metricsOnlyDescription": "このトークンは GET /api/v1/metrics のみ呼び出せ、他のエンドポイントでは拒否されます。所有者に system:metrics 権限が必要です。",
+      "metricsOnlyLabel": "メトリクス専用",
       "nameDescription": "任意 · 最大32文字",
       "nameLabel": "名前",
       "namePlaceholder": "トークンの短い名前を入力してください",
@@ -725,7 +733,9 @@
       "deleteBtn": "トークンを削除",
       "expiresOnLabel": "有効期限",
       "expiresOnShort": "有効期限: {{date}}",
+      "filterEmpty": "このフィルターに一致するトークンはありません。",
       "lastUsedLabel": "最終使用日",
+      "metricsOnlyBadge": "メトリクスのみ",
       "neverExpires": "無期限",
       "neverLabel": "なし",
       "neverUsed": "未使用",
@@ -1518,7 +1528,7 @@
     "selectMailbox": "メールボックスを選択...",
     "source": "ソース",
     "startImport": "インポート",
-    "successCount": "{{current}} 件を処理済み",
+    "successCount": "{{count}} 件をインポートしました",
     "target": "1. 対象アカウントの選択",
     "title": "インポート",
     "uploading": "アップロード中…",
@@ -1791,9 +1801,13 @@
       "warningTitle": "警告"
     },
     "folders": "フォルダー",
+    "hideDetails": "詳細を隠す",
     "messages": "メッセージ",
     "noMessages": "メッセージなし",
+    "noSubject": "(件名なし)",
+    "openInSearch": "検索で開く",
     "selectFolder": "フォルダーを選択してメッセージを閲覧",
+    "showDetails": "詳細を表示",
     "thread": {
       "empty": "このスレッドにメッセージはありません。",
       "invalidDate": "無効な日付",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "基本システムアクセス",
+      "metrics": "サーバーメトリクスを読み取る（Prometheus エンドポイント）",
       "root": "システム完全制御"
     },
     "timestamp": {

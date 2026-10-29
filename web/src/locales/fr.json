@@ -704,6 +704,12 @@
       "save": "Enregistrer",
       "saveChanges": "Enregistrer les modifications"
     },
+    "filters": {
+      "all": "Tous les jetons",
+      "label": "Filtrer",
+      "metricsOnly": "Métriques uniquement",
+      "regular": "Jetons standard"
+    },
     "form": {
       "1day": "1 jour",
       "30days": "30 jours",
@@ -715,6 +721,8 @@
       "expirationDescription": "Les jetons expireront automatiquement après le délai sélectionné.",
       "expirationLabel": "Expiration",
       "expirationPlaceholder": "Sélectionner l'expiration",
+      "metricsOnlyDescription": "Le jeton ne peut appeler que GET /api/v1/metrics ; tous les autres points d'accès le rejettent. Le propriétaire doit détenir la permission system:metrics.",
+      "metricsOnlyLabel": "Point d'accès métriques uniquement",
       "nameDescription": "Optionnel · Max 32 caractères",
       "nameLabel": "Nom",
       "namePlaceholder": "Donnez un nom court à ce jeton",
@@ -725,7 +733,9 @@
       "deleteBtn": "Supprimer le jeton",
       "expiresOnLabel": "Expire le",
       "expiresOnShort": "Expire le {{date}}",
+      "filterEmpty": "Aucun jeton ne correspond à ce filtre.",
       "lastUsedLabel": "Dernière utilisation",
+      "metricsOnlyBadge": "Métriques uniquement",
       "neverExpires": "N'expire jamais",
       "neverLabel": "Jamais",
       "neverUsed": "Jamais",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Avertissement"
     },
     "folders": "Dossiers",
+    "hideDetails": "Masquer les détails",
     "messages": "Messages",
     "noMessages": "Aucun message",
+    "noSubject": "(Sans objet)",
+    "openInSearch": "Ouvrir dans la recherche",
     "selectFolder": "Sélectionnez un dossier pour voir les messages",
+    "showDetails": "Afficher les détails",
     "thread": {
       "empty": "Aucun message dans ce fil de discussion.",
       "invalidDate": "Date invalide",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Accès système de base",
+      "metrics": "Lire les métriques du serveur (point d'accès Prometheus)",
       "root": "Contrôle système complet"
     },
     "timestamp": {

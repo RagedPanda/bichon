@@ -704,6 +704,12 @@
       "save": "Tallenna",
       "saveChanges": "Tallenna muutokset"
     },
+    "filters": {
+      "all": "Kaikki tunnukset",
+      "label": "Suodata",
+      "metricsOnly": "Vain mittarit",
+      "regular": "Tavalliset tunnukset"
+    },
     "form": {
       "1day": "1 päivä",
       "30days": "30 päivää",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tunnukset vanhenevat automaattisesti valitun ajan kuluttua.",
       "expirationLabel": "Vanhentuminen",
       "expirationPlaceholder": "Valitse vanhentumisaika",
+      "metricsOnlyDescription": "Tunnus voi kutsua vain GET /api/v1/metrics -päätepistettä, ja muut hylätään. Omistajalla on oltava system:metrics-käyttöoikeus.",
+      "metricsOnlyLabel": "Vain mittaripäätepiste",
       "nameDescription": "Valinnainen · Enintään 32 merkkiä",
       "nameLabel": "Nimi",
       "namePlaceholder": "Anna tunnukselle lyhyt nimi",
@@ -725,7 +733,9 @@
       "deleteBtn": "Poista tunnus",
       "expiresOnLabel": "Vanhenee",
       "expiresOnShort": "Vanhenee {{date}}",
+      "filterEmpty": "Mikään tunnus ei vastaa tätä suodatinta.",
       "lastUsedLabel": "Viimeksi käytetty",
+      "metricsOnlyBadge": "Vain mittarit",
       "neverExpires": "Ei vanhene koskaan",
       "neverLabel": "Ei koskaan",
       "neverUsed": "Ei koskaan",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Varoitus"
     },
     "folders": "Kansiot",
+    "hideDetails": "Piilota tiedot",
     "messages": "Viestit",
     "noMessages": "Ei viestejä",
+    "noSubject": "(Ei aihetta)",
+    "openInSearch": "Avaa haussa",
     "selectFolder": "Valitse kansio nähdäksesi viestit",
+    "showDetails": "Näytä tiedot",
     "thread": {
       "empty": "Ei viestejä tässä keskusteluketjussa.",
       "invalidDate": "Virheellinen päivämäärä",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Perusjärjestelmän käyttö",
+      "metrics": "Lue palvelimen mittarit (Prometheus-päätepiste)",
       "root": "Täysi järjestelmän hallinta"
     },
     "timestamp": {

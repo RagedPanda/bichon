@@ -704,6 +704,12 @@
       "save": "Gem",
       "saveChanges": "Gem ændringer"
     },
+    "filters": {
+      "all": "Alle tokens",
+      "label": "Filter",
+      "metricsOnly": "Kun metrikker",
+      "regular": "Almindelige tokens"
+    },
     "form": {
       "1day": "1 dag",
       "30days": "30 dage",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tokens udløber automatisk efter den valgte tid.",
       "expirationLabel": "Udløb",
       "expirationPlaceholder": "Vælg udløb",
+      "metricsOnlyDescription": "Tokenet kan kun kalde GET /api/v1/metrics og afvises på alle andre endepunkter. Ejeren skal have tilladelsen system:metrics.",
+      "metricsOnlyLabel": "Kun metrik-endpoint",
       "nameDescription": "Valgfrit · Max 32 tegn",
       "nameLabel": "Navn",
       "namePlaceholder": "Giv dette token et kort navn",
@@ -725,7 +733,9 @@
       "deleteBtn": "Slet token",
       "expiresOnLabel": "Udløber den",
       "expiresOnShort": "Udløber den {{date}}",
+      "filterEmpty": "Ingen tokens matcher dette filter.",
       "lastUsedLabel": "Sidst brugt",
+      "metricsOnlyBadge": "Kun metrikker",
       "neverExpires": "Udløber aldrig",
       "neverLabel": "Aldrig",
       "neverUsed": "Aldrig",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Advarsel"
     },
     "folders": "Mapper",
+    "hideDetails": "Skjul detaljer",
     "messages": "Meddelelser",
     "noMessages": "Ingen meddelelser",
+    "noSubject": "(Intet emne)",
+    "openInSearch": "Åbn i søgning",
     "selectFolder": "Vælg en mappe for at se meddelelser",
+    "showDetails": "Vis detaljer",
     "thread": {
       "empty": "Ingen meddelelser i denne tråd.",
       "invalidDate": "Ugyldig dato",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Grundlæggende systemadgang",
+      "metrics": "Læs servermetrikker (Prometheus-endpoint)",
       "root": "Fuld systemkontrol"
     },
     "timestamp": {

@@ -704,6 +704,12 @@
       "save": "Guardar",
       "saveChanges": "Guardar cambios"
     },
+    "filters": {
+      "all": "Todos los tokens",
+      "label": "Filtrar",
+      "metricsOnly": "Solo métricas",
+      "regular": "Tokens normales"
+    },
     "form": {
       "1day": "1 día",
       "30days": "30 días",
@@ -715,6 +721,8 @@
       "expirationDescription": "Los tokens expirarán automáticamente después del tiempo seleccionado.",
       "expirationLabel": "Expiración",
       "expirationPlaceholder": "Seleccionar expiración",
+      "metricsOnlyDescription": "El token solo puede llamar a GET /api/v1/metrics y se rechaza en los demás endpoints. Su propietario debe tener el permiso system:metrics.",
+      "metricsOnlyLabel": "Solo endpoint de métricas",
       "nameDescription": "Opcional · Máx. 32 caracteres",
       "nameLabel": "Nombre",
       "namePlaceholder": "Dale a este token un nombre corto",
@@ -725,7 +733,9 @@
       "deleteBtn": "Eliminar token",
       "expiresOnLabel": "Expira el",
       "expiresOnShort": "Expira el {{date}}",
+      "filterEmpty": "Ningún token coincide con este filtro.",
       "lastUsedLabel": "Último uso",
+      "metricsOnlyBadge": "Solo métricas",
       "neverExpires": "Nunca expira",
       "neverLabel": "Nunca",
       "neverUsed": "Nunca",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Advertencia"
     },
     "folders": "Carpetas",
+    "hideDetails": "Ocultar detalles",
     "messages": "Mensajes",
     "noMessages": "No hay mensajes",
+    "noSubject": "(Sin asunto)",
+    "openInSearch": "Abrir en búsqueda",
     "selectFolder": "Selecciona una carpeta para ver los mensajes",
+    "showDetails": "Mostrar detalles",
     "thread": {
       "empty": "No hay mensajes en este hilo.",
       "invalidDate": "Fecha inválida",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Acceso básico al sistema",
+      "metrics": "Leer métricas del servidor (endpoint Prometheus)",
       "root": "Control total del sistema"
     },
     "timestamp": {

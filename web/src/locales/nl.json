@@ -704,6 +704,12 @@
       "save": "Opslaan",
       "saveChanges": "Wijzigingen opslaan"
     },
+    "filters": {
+      "all": "Alle tokens",
+      "label": "Filteren",
+      "metricsOnly": "Alleen metrics",
+      "regular": "Gewone tokens"
+    },
     "form": {
       "1day": "1 dag",
       "30days": "30 dagen",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tokens verlopen automatisch na de geselecteerde tijd.",
       "expirationLabel": "Vervaldatum",
       "expirationPlaceholder": "Selecteer vervaldatum",
+      "metricsOnlyDescription": "Het token mag alleen GET /api/v1/metrics aanroepen en wordt op alle andere endpoints geweigerd. De eigenaar moet de machtiging system:metrics hebben.",
+      "metricsOnlyLabel": "Alleen metrics-endpoint",
       "nameDescription": "Optioneel · Max 32 tekens",
       "nameLabel": "Naam",
       "namePlaceholder": "Geef dit token een korte naam",
@@ -725,7 +733,9 @@
       "deleteBtn": "Token verwijderen",
       "expiresOnLabel": "Verloopt op",
       "expiresOnShort": "Verloopt op {{date}}",
+      "filterEmpty": "Geen tokens voor dit filter.",
       "lastUsedLabel": "Laatst gebruikt",
+      "metricsOnlyBadge": "Alleen metrics",
       "neverExpires": "Verloopt nooit",
       "neverLabel": "Nooit",
       "neverUsed": "Nooit",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Waarschuwing"
     },
     "folders": "Mappen",
+    "hideDetails": "Details verbergen",
     "messages": "Berichten",
     "noMessages": "Geen berichten",
+    "noSubject": "(Geen onderwerp)",
+    "openInSearch": "Openen in zoeken",
     "selectFolder": "Selecteer een map om berichten te bekijken",
+    "showDetails": "Details tonen",
     "thread": {
       "empty": "Geen berichten in deze draad.",
       "invalidDate": "Ongeldige Datum",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Basistoegang tot het systeem",
+      "metrics": "Servermetrieken lezen (Prometheus-endpoint)",
       "root": "Volledige systeemcontrole"
     },
     "timestamp": {

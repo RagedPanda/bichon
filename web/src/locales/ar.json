@@ -704,6 +704,12 @@
       "save": "حفظ",
       "saveChanges": "حفظ التغييرات"
     },
+    "filters": {
+      "all": "كل الرموز",
+      "label": "تصفية",
+      "metricsOnly": "المقاييس فقط",
+      "regular": "الرموز العادية"
+    },
     "form": {
       "1day": "يوم واحد",
       "30days": "30 يومًا",
@@ -715,6 +721,8 @@
       "expirationDescription": "ستنتهي صلاحية الرموز تلقائيًا بعد الوقت المحدد.",
       "expirationLabel": "تنتهي الصلاحية",
       "expirationPlaceholder": "حدد تاريخ الانتهاء",
+      "metricsOnlyDescription": "يمكن للرمز استدعاء GET /api/v1/metrics فقط ويُرفض على بقية نقاط النهاية. يجب أن يملك المالك صلاحية system:metrics.",
+      "metricsOnlyLabel": "نقطة نهاية المقاييس فقط",
       "nameDescription": "اختياري · 32 حرفًا كحد أقصى",
       "nameLabel": "الاسم",
       "namePlaceholder": "أعطِ رمز الوصول هذا اسمًا قصيرًا",
@@ -725,7 +733,9 @@
       "deleteBtn": "حذف الرمز",
       "expiresOnLabel": "ينتهي في",
       "expiresOnShort": "ينتهي في {{date}}",
+      "filterEmpty": "لا توجد رموز مطابقة لهذه التصفية.",
       "lastUsedLabel": "آخر استخدام",
+      "metricsOnlyBadge": "المقاييس فقط",
       "neverExpires": "لا تنتهي صلاحيته أبدًا",
       "neverLabel": "أبدًا",
       "neverUsed": "أبدًا",
@@ -1791,9 +1801,13 @@
       "warningTitle": "تحذير"
     },
     "folders": "المجلدات",
+    "hideDetails": "إخفاء التفاصيل",
     "messages": "الرسائل",
     "noMessages": "لا توجد رسائل",
+    "noSubject": "(بدون موضوع)",
+    "openInSearch": "فتح في البحث",
     "selectFolder": "اختر مجلدًا لعرض الرسائل",
+    "showDetails": "إظهار التفاصيل",
     "thread": {
       "empty": "لا توجد رسائل في هذه المحادثة.",
       "invalidDate": "تاريخ غير صالح",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "الوصول الأساسي إلى النظام",
+      "metrics": "قراءة مقاييس الخادم (نقطة نهاية Prometheus)",
       "root": "التحكم الكامل في النظام"
     },
     "timestamp": {

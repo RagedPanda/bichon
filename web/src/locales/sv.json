@@ -704,6 +704,12 @@
       "save": "Spara",
       "saveChanges": "Spara ändringar"
     },
+    "filters": {
+      "all": "Alla token",
+      "label": "Filtrera",
+      "metricsOnly": "Endast mätvärden",
+      "regular": "Vanliga token"
+    },
     "form": {
       "1day": "1 dag",
       "30days": "30 dagar",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tokens går ut automatiskt efter den valda tiden.",
       "expirationLabel": "Giltighetstid",
       "expirationPlaceholder": "Välj utgångstid",
+      "metricsOnlyDescription": "Token kan bara anropa GET /api/v1/metrics och avvisas på alla andra slutpunkter. Ägaren måste ha behörigheten system:metrics.",
+      "metricsOnlyLabel": "Endast mätvärdes-slutpunkt",
       "nameDescription": "Valfritt · Max 32 tecken",
       "nameLabel": "Namn",
       "namePlaceholder": "Ge denna token ett kort namn",
@@ -725,7 +733,9 @@
       "deleteBtn": "Ta bort token",
       "expiresOnLabel": "Går ut den",
       "expiresOnShort": "Går ut {{date}}",
+      "filterEmpty": "Inga token matchar detta filter.",
       "lastUsedLabel": "Senast använd",
+      "metricsOnlyBadge": "Endast mätvärden",
       "neverExpires": "Går aldrig ut",
       "neverLabel": "Aldrig",
       "neverUsed": "Aldrig",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Varning"
     },
     "folders": "Mappar",
+    "hideDetails": "Dölj detaljer",
     "messages": "Meddelanden",
     "noMessages": "Inga meddelanden",
+    "noSubject": "(Inget ämne)",
+    "openInSearch": "Öppna i sökning",
     "selectFolder": "Välj en mapp för att visa meddelanden",
+    "showDetails": "Visa detaljer",
     "thread": {
       "empty": "Inga meddelanden i denna tråd.",
       "invalidDate": "Ogiltigt datum",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Grundläggande systemåtkomst",
+      "metrics": "Läs servermätvärden (Prometheus-slutpunkt)",
       "root": "Fullständig systemkontroll"
     },
     "timestamp": {

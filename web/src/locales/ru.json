@@ -704,6 +704,12 @@
       "save": "Сохранить",
       "saveChanges": "Сохранить изменения"
     },
+    "filters": {
+      "all": "Все токены",
+      "label": "Фильтр",
+      "metricsOnly": "Только метрики",
+      "regular": "Обычные токены"
+    },
     "form": {
       "1day": "1 день",
       "30days": "30 дней",
@@ -715,6 +721,8 @@
       "expirationDescription": "Токены автоматически истекают через выбранное время.",
       "expirationLabel": "Срок действия",
       "expirationPlaceholder": "Выберите срок",
+      "metricsOnlyDescription": "Токен может вызывать только GET /api/v1/metrics; на остальных эндпоинтах он отклоняется. Владелец должен иметь право system:metrics.",
+      "metricsOnlyLabel": "Только эндпоинт метрик",
       "nameDescription": "Опционально · макс. 32 символа",
       "nameLabel": "Имя",
       "namePlaceholder": "Дайте токену короткое имя",
@@ -725,7 +733,9 @@
       "deleteBtn": "Удалить токен",
       "expiresOnLabel": "Истекает",
       "expiresOnShort": "Истекает {{date}}",
+      "filterEmpty": "Нет токенов, подходящих под этот фильтр.",
       "lastUsedLabel": "Использован",
+      "metricsOnlyBadge": "Только метрики",
       "neverExpires": "Бессрочно",
       "neverLabel": "Никогда",
       "neverUsed": "Никогда",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Предупреждение"
     },
     "folders": "Папки",
+    "hideDetails": "Скрыть подробности",
     "messages": "Сообщения",
     "noMessages": "Нет сообщений",
+    "noSubject": "(Без темы)",
+    "openInSearch": "Открыть в поиске",
     "selectFolder": "Выберите папку для просмотра сообщений",
+    "showDetails": "Показать подробности",
     "thread": {
       "empty": "Нет сообщений в этой цепочке.",
       "invalidDate": "Неверная дата",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Базовый доступ к системе",
+      "metrics": "Чтение метрик сервера (эндпоинт Prometheus)",
       "root": "Полный контроль системы"
     },
     "timestamp": {

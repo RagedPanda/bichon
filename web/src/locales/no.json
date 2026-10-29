@@ -704,6 +704,12 @@
       "save": "Lagre",
       "saveChanges": "Lagre endringer"
     },
+    "filters": {
+      "all": "Alle tokener",
+      "label": "Filtrer",
+      "metricsOnly": "Bare metrikker",
+      "regular": "Vanlige tokener"
+    },
     "form": {
       "1day": "1 dag",
       "30days": "30 dager",
@@ -715,6 +721,8 @@
       "expirationDescription": "Tokener utløper automatisk etter valgt tid.",
       "expirationLabel": "Utløp",
       "expirationPlaceholder": "Velg utløp",
+      "metricsOnlyDescription": "Tokenet kan bare kalle GET /api/v1/metrics og avvises på alle andre endepunkter. Eieren må ha tillatelsen system:metrics.",
+      "metricsOnlyLabel": "Bare metrikk-endepunkt",
       "nameDescription": "Valgfritt · Maks 32 tegn",
       "nameLabel": "Navn",
       "namePlaceholder": "Gi denne tokenen et kort navn",
@@ -725,7 +733,9 @@
       "deleteBtn": "Slett token",
       "expiresOnLabel": "Utløper den",
       "expiresOnShort": "Utløper {{date}}",
+      "filterEmpty": "Ingen tokener samsvarer med dette filteret.",
       "lastUsedLabel": "Sist brukt",
+      "metricsOnlyBadge": "Bare metrikker",
       "neverExpires": "Utløper aldri",
       "neverLabel": "Aldri",
       "neverUsed": "Aldri",
@@ -1791,9 +1801,13 @@
       "warningTitle": "Advarsel"
     },
     "folders": "Mapper",
+    "hideDetails": "Skjul detaljer",
     "messages": "Meldinger",
     "noMessages": "Ingen meldinger",
+    "noSubject": "(Uten emne)",
+    "openInSearch": "Åpne i søk",
     "selectFolder": "Velg en mappe for å se meldinger",
+    "showDetails": "Vis detaljer",
     "thread": {
       "empty": "Ingen meldinger i denne tråden.",
       "invalidDate": "Ugyldig dato",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "Grunnleggende systemtilgang",
+      "metrics": "Les servermetrikker (Prometheus-endepunkt)",
       "root": "Full systemkontroll"
     },
     "timestamp": {

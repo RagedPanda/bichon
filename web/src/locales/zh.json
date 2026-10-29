@@ -704,6 +704,12 @@
       "save": "保存",
       "saveChanges": "保存修改"
     },
+    "filters": {
+      "all": "全部令牌",
+      "label": "筛选",
+      "metricsOnly": "仅指标",
+      "regular": "普通令牌"
+    },
     "form": {
       "1day": "1 天",
       "30days": "30 天",
@@ -715,6 +721,8 @@
       "expirationDescription": "令牌将在选定时间后自动过期。",
       "expirationLabel": "有效期",
       "expirationPlaceholder": "选择有效期",
+      "metricsOnlyDescription": "该令牌只能调用 GET /api/v1/metrics，其他接口一律拒绝。持有者需具备 system:metrics 权限。",
+      "metricsOnlyLabel": "仅限指标接口",
       "nameDescription": "可选 · 最多 32 个字符",
       "nameLabel": "名称",
       "namePlaceholder": "为该访问令牌起一个简短的名称",
@@ -725,7 +733,9 @@
       "deleteBtn": "删除令牌",
       "expiresOnLabel": "有效期至",
       "expiresOnShort": "有效期至 {{date}}",
+      "filterEmpty": "没有符合该筛选条件的令牌。",
       "lastUsedLabel": "最后使用",
+      "metricsOnlyBadge": "仅指标",
       "neverExpires": "永不过期",
       "neverLabel": "从不",
       "neverUsed": "未使用",
@@ -1791,9 +1801,13 @@
       "warningTitle": "警告"
     },
     "folders": "文件夹",
+    "hideDetails": "隐藏详情",
     "messages": "消息",
     "noMessages": "无消息",
+    "noSubject": "(无主题)",
+    "openInSearch": "在搜索中打开",
     "selectFolder": "选择一个文件夹以查看消息",
+    "showDetails": "显示详情",
     "thread": {
       "empty": "该会话没有消息。",
       "invalidDate": "无效日期",
@@ -2055,6 +2069,7 @@
     },
     "system": {
       "access": "基础系统访问",
+      "metrics": "读取服务器指标（Prometheus 接口）",
       "root": "系统最高控制权"
     },
     "timestamp": {

@@ -1807,6 +1807,23 @@
     },
     "title": "Mailboks"
   },
+  "mailboxView": {
+    "allFolders": "Alle mapper",
+    "clearSearch": "Ryd søgning",
+    "empty": "Ingen meddelelser i denne mappe.",
+    "folders": "Mapper",
+    "loadError": "Kunne ikke indlæse mapper.",
+    "message": "Meddelelse",
+    "messageCount": "Meddelelser: {{count}}",
+    "noAccounts": "Ingen konti med postkasser.",
+    "noMatches": "Ingen meddelelser matcher denne søgning.",
+    "noSubject": "(Intet emne)",
+    "openInSearch": "Åbn på søgesiden",
+    "searchFolders": "Søg i mapper...",
+    "searchInFolder": "Søg i denne mappe...",
+    "selectAccount": "Vælg konto",
+    "selectMessage": "Vælg en meddelelse for at læse den her."
+  },
   "navigation": {
     "accessTokens": "Adgangstokens",
     "accounts": "Konti",

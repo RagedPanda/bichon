@@ -1807,6 +1807,23 @@
     },
     "title": "Boîte aux lettres"
   },
+  "mailboxView": {
+    "allFolders": "Tous les dossiers",
+    "clearSearch": "Effacer la recherche",
+    "empty": "Aucun message dans ce dossier.",
+    "folders": "Dossiers",
+    "loadError": "Échec du chargement des dossiers.",
+    "message": "Message",
+    "messageCount": "Messages : {{count}}",
+    "noAccounts": "Aucun compte avec boîte aux lettres.",
+    "noMatches": "Aucun message ne correspond à cette recherche.",
+    "noSubject": "(Sans objet)",
+    "openInSearch": "Ouvrir dans la page de recherche",
+    "searchFolders": "Rechercher des dossiers...",
+    "searchInFolder": "Rechercher dans ce dossier...",
+    "selectAccount": "Sélectionner un compte",
+    "selectMessage": "Sélectionnez un message pour le lire ici."
+  },
   "navigation": {
     "accessTokens": "Jetons d'accès",
     "accounts": "Comptes",

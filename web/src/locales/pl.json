@@ -1807,6 +1807,23 @@
     },
     "title": "Skrzynka pocztowa"
   },
+  "mailboxView": {
+    "allFolders": "Wszystkie foldery",
+    "clearSearch": "Wyczyść wyszukiwanie",
+    "empty": "Brak wiadomości w tym folderze.",
+    "folders": "Foldery",
+    "loadError": "Nie udało się wczytać folderów.",
+    "message": "Wiadomość",
+    "messageCount": "Wiadomości: {{count}}",
+    "noAccounts": "Brak kont ze skrzynkami.",
+    "noMatches": "Żadna wiadomość nie pasuje do tego wyszukiwania.",
+    "noSubject": "(Bez tematu)",
+    "openInSearch": "Otwórz na stronie wyszukiwania",
+    "searchFolders": "Szukaj folderów...",
+    "searchInFolder": "Szukaj w tym folderze...",
+    "selectAccount": "Wybierz konto",
+    "selectMessage": "Wybierz wiadomość, aby przeczytać ją tutaj."
+  },
   "navigation": {
     "accessTokens": "Tokeny",
     "accounts": "Konta",

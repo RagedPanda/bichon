@@ -1807,6 +1807,23 @@
     },
     "title": "받은 편지함"
   },
+  "mailboxView": {
+    "allFolders": "모든 폴더",
+    "clearSearch": "검색 지우기",
+    "empty": "이 폴더에 메시지가 없습니다.",
+    "folders": "폴더",
+    "loadError": "폴더를 불러오지 못했습니다.",
+    "message": "메시지",
+    "messageCount": "메시지: {{count}}",
+    "noAccounts": "사서함이 있는 계정이 없습니다.",
+    "noMatches": "이 검색과 일치하는 메시지가 없습니다.",
+    "noSubject": "(제목 없음)",
+    "openInSearch": "검색 페이지에서 열기",
+    "searchFolders": "폴더 검색...",
+    "searchInFolder": "이 폴더에서 검색...",
+    "selectAccount": "계정 선택",
+    "selectMessage": "메시지를 선택하면 여기에 표시됩니다."
+  },
   "navigation": {
     "accessTokens": "접근 토큰",
     "accounts": "계정",

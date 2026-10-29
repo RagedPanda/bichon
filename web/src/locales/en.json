@@ -1821,6 +1821,23 @@
     },
     "title": "Mailbox"
   },
+  "mailboxView": {
+    "allFolders": "All folders",
+    "clearSearch": "Clear search",
+    "empty": "No messages in this folder.",
+    "folders": "Folders",
+    "loadError": "Failed to load folders.",
+    "message": "Message",
+    "messageCount": "Messages: {{count}}",
+    "noAccounts": "No accounts with mailboxes.",
+    "noMatches": "No messages match this search.",
+    "noSubject": "(No subject)",
+    "openInSearch": "Open in search page",
+    "searchFolders": "Search folders...",
+    "searchInFolder": "Search in this folder...",
+    "selectAccount": "Select account",
+    "selectMessage": "Select a message to read it here."
+  },
   "navigation": {
     "accessTokens": "Access Tokens",
     "accounts": "Accounts",
@@ -1846,24 +1863,6 @@
     "settings": "Settings",
     "timestampAnchor": "Timestamp anchoring",
     "users": "System Users"
-  },
-  "mailboxView": {
-    "allFolders": "All folders",
-    "clearSearch": "Clear search",
-    "empty": "No messages in this folder.",
-    "folders": "Folders",
-    "loadError": "Failed to load folders.",
-    "message": "Message",
-    "messageCount_one": "{{count}} message",
-    "messageCount_other": "{{count}} messages",
-    "noAccounts": "No accounts with mailboxes.",
-    "noMatches": "No messages match this search.",
-    "noSubject": "(No subject)",
-    "openInSearch": "Open in search page",
-    "searchFolders": "Search folders...",
-    "searchInFolder": "Search in this folder...",
-    "selectAccount": "Select account",
-    "selectMessage": "Select a message to read it here."
   },
   "oauth2": {
     "aSecretKeyProvidedByTheOAuthProvider": "A secret key provided by the OAuth provider to authenticate your application.",

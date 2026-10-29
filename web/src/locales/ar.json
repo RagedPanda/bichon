@@ -1807,6 +1807,23 @@
     },
     "title": "صندوق البريد"
   },
+  "mailboxView": {
+    "allFolders": "كل المجلدات",
+    "clearSearch": "مسح البحث",
+    "empty": "لا توجد رسائل في هذا المجلد.",
+    "folders": "المجلدات",
+    "loadError": "تعذّر تحميل المجلدات.",
+    "message": "رسالة",
+    "messageCount": "الرسائل: {{count}}",
+    "noAccounts": "لا توجد حسابات بصناديق بريد.",
+    "noMatches": "لا توجد رسائل مطابقة لهذا البحث.",
+    "noSubject": "(بدون موضوع)",
+    "openInSearch": "فتح في صفحة البحث",
+    "searchFolders": "البحث في المجلدات...",
+    "searchInFolder": "البحث داخل هذا المجلد...",
+    "selectAccount": "اختيار حساب",
+    "selectMessage": "اختر رسالة لعرضها هنا."
+  },
   "navigation": {
     "accessTokens": "رموز الوصول",
     "accounts": "الحسابات",

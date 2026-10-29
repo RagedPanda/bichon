@@ -1807,6 +1807,23 @@
     },
     "title": "信箱"
   },
+  "mailboxView": {
+    "allFolders": "全部資料夾",
+    "clearSearch": "清除搜尋",
+    "empty": "此資料夾中沒有郵件。",
+    "folders": "資料夾",
+    "loadError": "載入資料夾失敗。",
+    "message": "郵件",
+    "messageCount": "郵件：{{count}}",
+    "noAccounts": "沒有含信箱的帳戶。",
+    "noMatches": "沒有符合此搜尋的郵件。",
+    "noSubject": "(無主旨)",
+    "openInSearch": "在搜尋頁開啟",
+    "searchFolders": "搜尋資料夾...",
+    "searchInFolder": "在此資料夾中搜尋...",
+    "selectAccount": "選擇帳戶",
+    "selectMessage": "選擇一封郵件在此閱讀。"
+  },
   "navigation": {
     "accessTokens": "存取權杖",
     "accounts": "帳號",

@@ -1807,6 +1807,23 @@
     },
     "title": "メールボックス"
   },
+  "mailboxView": {
+    "allFolders": "すべてのフォルダー",
+    "clearSearch": "検索をクリア",
+    "empty": "このフォルダーにメッセージはありません。",
+    "folders": "フォルダー",
+    "loadError": "フォルダーを読み込めませんでした。",
+    "message": "メッセージ",
+    "messageCount": "メッセージ: {{count}}",
+    "noAccounts": "メールボックスのあるアカウントがありません。",
+    "noMatches": "この検索に一致するメッセージはありません。",
+    "noSubject": "(件名なし)",
+    "openInSearch": "検索ページで開く",
+    "searchFolders": "フォルダーを検索...",
+    "searchInFolder": "このフォルダー内を検索...",
+    "selectAccount": "アカウントを選択",
+    "selectMessage": "メッセージを選択するとここに表示されます。"
+  },
   "navigation": {
     "accessTokens": "アクセストークン",
     "accounts": "アカウント",

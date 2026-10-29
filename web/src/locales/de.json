@@ -1807,6 +1807,23 @@
     },
     "title": "Postfach"
   },
+  "mailboxView": {
+    "allFolders": "Alle Ordner",
+    "clearSearch": "Suche zurücksetzen",
+    "empty": "Keine Nachrichten in diesem Ordner.",
+    "folders": "Ordner",
+    "loadError": "Ordner konnten nicht geladen werden.",
+    "message": "Nachricht",
+    "messageCount": "Nachrichten: {{count}}",
+    "noAccounts": "Keine Konten mit Postfächern.",
+    "noMatches": "Keine Nachrichten für diese Suche.",
+    "noSubject": "(Kein Betreff)",
+    "openInSearch": "In der Suchseite öffnen",
+    "searchFolders": "Ordner durchsuchen...",
+    "searchInFolder": "In diesem Ordner suchen...",
+    "selectAccount": "Konto auswählen",
+    "selectMessage": "Nachricht auswählen, um sie hier zu lesen."
+  },
   "navigation": {
     "accessTokens": "Zugriffstoken",
     "accounts": "Konten",

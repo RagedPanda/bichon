@@ -1807,6 +1807,23 @@
     },
     "title": "Posta in arrivo"
   },
+  "mailboxView": {
+    "allFolders": "Tutte le cartelle",
+    "clearSearch": "Cancella ricerca",
+    "empty": "Nessun messaggio in questa cartella.",
+    "folders": "Cartelle",
+    "loadError": "Impossibile caricare le cartelle.",
+    "message": "Messaggio",
+    "messageCount": "Messaggi: {{count}}",
+    "noAccounts": "Nessun account con caselle di posta.",
+    "noMatches": "Nessun messaggio corrisponde a questa ricerca.",
+    "noSubject": "(Nessun oggetto)",
+    "openInSearch": "Apri nella pagina di ricerca",
+    "searchFolders": "Cerca cartelle...",
+    "searchInFolder": "Cerca in questa cartella...",
+    "selectAccount": "Seleziona account",
+    "selectMessage": "Seleziona un messaggio per leggerlo qui."
+  },
   "navigation": {
     "accessTokens": "Token di accesso",
     "accounts": "Account",

@@ -1807,6 +1807,23 @@
     },
     "title": "Postvak In"
   },
+  "mailboxView": {
+    "allFolders": "Alle mappen",
+    "clearSearch": "Zoekopdracht wissen",
+    "empty": "Geen berichten in deze map.",
+    "folders": "Mappen",
+    "loadError": "Mappen laden mislukt.",
+    "message": "Bericht",
+    "messageCount": "Berichten: {{count}}",
+    "noAccounts": "Geen accounts met mailboxen.",
+    "noMatches": "Geen berichten voor deze zoekopdracht.",
+    "noSubject": "(Geen onderwerp)",
+    "openInSearch": "Openen in zoekpagina",
+    "searchFolders": "Mappen zoeken...",
+    "searchInFolder": "In deze map zoeken...",
+    "selectAccount": "Account selecteren",
+    "selectMessage": "Selecteer een bericht om het hier te lezen."
+  },
   "navigation": {
     "accessTokens": "Toegangstokens",
     "accounts": "Accounts",

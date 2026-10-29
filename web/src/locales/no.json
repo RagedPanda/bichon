@@ -1807,6 +1807,23 @@
     },
     "title": "Postkasse"
   },
+  "mailboxView": {
+    "allFolders": "Alle mapper",
+    "clearSearch": "Tøm søk",
+    "empty": "Ingen meldinger i denne mappen.",
+    "folders": "Mapper",
+    "loadError": "Kunne ikke laste mapper.",
+    "message": "Melding",
+    "messageCount": "Meldinger: {{count}}",
+    "noAccounts": "Ingen kontoer med postbokser.",
+    "noMatches": "Ingen meldinger samsvarer med dette søket.",
+    "noSubject": "(Uten emne)",
+    "openInSearch": "Åpne i søkesiden",
+    "searchFolders": "Søk i mapper...",
+    "searchInFolder": "Søk i denne mappen...",
+    "selectAccount": "Velg konto",
+    "selectMessage": "Velg en melding for å lese den her."
+  },
   "navigation": {
     "accessTokens": "Tilgangstokener",
     "accounts": "Kontoer",

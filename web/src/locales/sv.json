@@ -1807,6 +1807,23 @@
     },
     "title": "Brevlåda"
   },
+  "mailboxView": {
+    "allFolders": "Alla mappar",
+    "clearSearch": "Rensa sökning",
+    "empty": "Inga meddelanden i den här mappen.",
+    "folders": "Mappar",
+    "loadError": "Det gick inte att läsa in mapparna.",
+    "message": "Meddelande",
+    "messageCount": "Meddelanden: {{count}}",
+    "noAccounts": "Inga konton med brevlådor.",
+    "noMatches": "Inga meddelanden matchar den här sökningen.",
+    "noSubject": "(Inget ämne)",
+    "openInSearch": "Öppna på söksidan",
+    "searchFolders": "Sök mappar...",
+    "searchInFolder": "Sök i den här mappen...",
+    "selectAccount": "Välj konto",
+    "selectMessage": "Välj ett meddelande för att läsa det här."
+  },
   "navigation": {
     "accessTokens": "Åtkomsttokens",
     "accounts": "Konton",

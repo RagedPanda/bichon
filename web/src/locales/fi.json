@@ -1807,6 +1807,23 @@
     },
     "title": "Sähköposti"
   },
+  "mailboxView": {
+    "allFolders": "Kaikki kansiot",
+    "clearSearch": "Tyhjennä haku",
+    "empty": "Tässä kansiossa ei ole viestejä.",
+    "folders": "Kansiot",
+    "loadError": "Kansioiden lataus epäonnistui.",
+    "message": "Viesti",
+    "messageCount": "Viestejä: {{count}}",
+    "noAccounts": "Ei tilejä, joilla on postilaatikko.",
+    "noMatches": "Mikään viesti ei vastaa tätä hakua.",
+    "noSubject": "(Ei aihetta)",
+    "openInSearch": "Avaa hakusivulla",
+    "searchFolders": "Hae kansioita...",
+    "searchInFolder": "Hae tässä kansiossa...",
+    "selectAccount": "Valitse tili",
+    "selectMessage": "Valitse viesti lukeaksesi sen tässä."
+  },
   "navigation": {
     "accessTokens": "Kulkuavaimet",
     "accounts": "Tilit",

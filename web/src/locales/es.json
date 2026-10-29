@@ -1807,6 +1807,23 @@
     },
     "title": "Buzón"
   },
+  "mailboxView": {
+    "allFolders": "Todas las carpetas",
+    "clearSearch": "Borrar búsqueda",
+    "empty": "No hay mensajes en esta carpeta.",
+    "folders": "Carpetas",
+    "loadError": "No se pudieron cargar las carpetas.",
+    "message": "Mensaje",
+    "messageCount": "Mensajes: {{count}}",
+    "noAccounts": "No hay cuentas con buzones.",
+    "noMatches": "Ningún mensaje coincide con esta búsqueda.",
+    "noSubject": "(Sin asunto)",
+    "openInSearch": "Abrir en la página de búsqueda",
+    "searchFolders": "Buscar carpetas...",
+    "searchInFolder": "Buscar en esta carpeta...",
+    "selectAccount": "Seleccionar cuenta",
+    "selectMessage": "Selecciona un mensaje para leerlo aquí."
+  },
   "navigation": {
     "accessTokens": "Tokens de acceso",
     "accounts": "Cuentas",

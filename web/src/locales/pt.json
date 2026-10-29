@@ -1807,6 +1807,23 @@
     },
     "title": "Caixa de Entrada"
   },
+  "mailboxView": {
+    "allFolders": "Todas as pastas",
+    "clearSearch": "Limpar pesquisa",
+    "empty": "Nenhuma mensagem nesta pasta.",
+    "folders": "Pastas",
+    "loadError": "Falha ao carregar as pastas.",
+    "message": "Mensagem",
+    "messageCount": "Mensagens: {{count}}",
+    "noAccounts": "Nenhuma conta com caixas de correio.",
+    "noMatches": "Nenhuma mensagem corresponde a esta pesquisa.",
+    "noSubject": "(Sem assunto)",
+    "openInSearch": "Abrir na página de pesquisa",
+    "searchFolders": "Pesquisar pastas...",
+    "searchInFolder": "Pesquisar nesta pasta...",
+    "selectAccount": "Selecionar conta",
+    "selectMessage": "Selecione uma mensagem para lê-la aqui."
+  },
   "navigation": {
     "accessTokens": "Tokens de Acesso",
     "accounts": "Contas",
